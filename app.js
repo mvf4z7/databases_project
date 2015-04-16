@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // commented for angula
 //app.use('/', routes); //commented for angular
 //app.use('/users', users);
 app.use('/api', api);
-app.use('/', express.static(path.join(__dirname,'../client')));
+//app.use('/', express.static(path.join(__dirname,'../client')));
 
 //catch 404 and forward to error handler
 app.use(function(req, res, next) {
