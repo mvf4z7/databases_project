@@ -2,6 +2,19 @@ var db = require('../../databases/mysql');
 var fs = require('fs');
 var async = require('async');
 
+module.exports.queryDocuments = function(req, res) {
+	db.getConnection(function(err, connection) {
+		if(req.query === undefined) {
+			console.log("query is undefined");
+		}
+		else {
+			console.log("query is defined");
+		}
+
+		res.send({result : req.query});
+	});
+};
+
 module.exports.getSingleDocument = function(req, res, DID) {
 	db.getConnection(function(err, connection) {
 		var query = connection.query('SELECT * FROM Document WHERE DID = ?', DID, function(err, result) {

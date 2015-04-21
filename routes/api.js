@@ -27,6 +27,9 @@ router.route('/departments')
 	.get(function(req, res) { departments.getAllDepartments(req, res) })
 	.post(function(req,res) { departments.addDepartment(req,res) });
 
+router.route('/departments/:abbreviation/courses')
+	.get(function(req, res) { departments.getCourses(req, res, req.params.abbreviation) });
+
 /* Students Routes */
 router.route('/students')
 	.post(function(req, res) { students.addStudent(req, res) }); // Creates new user
@@ -37,12 +40,16 @@ router.route('/students/:username')
 	.put(function(req,res) { students.updateStudent(req, res, req.params.username) }) // Update a user's info
 	.delete(function(req, res) { students.deleteStudent(req, res, req.params.username) }); // Delete a user from the system
 
-/* Single Document Route */
+/* Documents Routes */
+router.route('/documents')
+	.get(function(req, res) { documents.queryDocuments(req, res) }); // 
+
+/* Single Document Routes */
 router.route('/documents/:DID')
 	.get(function(req, res) { documents.getSingleDocument(req, res, req.params.DID) })
 	.put(function(req, res) { documents.updateDocument(req, res, req.params.DID) });
 
-/* Document Download Route */
+/* Document Download Routes */
 router.route('/documents/:DID/download')
 	.get(function(req, res) { documents.downloadDocument(req, res, req.params.DID) });
 
