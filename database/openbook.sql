@@ -24,7 +24,7 @@ CREATE TABLE Document(
 	DID INTEGER PRIMARY KEY,
 	name VARCHAR(255) NOT NULL,
 	DOU DATE NOT NULL, -- Format is 'YYYY-MM-DD'
-	teacher_name VARCHAR(255) NOT NULL, -- Needs to reference teacher_name in Teachers table
+	TID INTEGER(255) NOT NULL, -- Needs to reference teacher_name in Teachers table
 	-- CID VARCHAR(255) NOT NULL, -- Needs to reference CID in Class table, NOT IN PHASE 2 EER diagram
 	votes INTEGER NOT NULL DEFAULT 0,
 	season VARCHAR(6) NOT NULL check(season = 'Fall' or season = 'Spring' or season = 'Summer'),
@@ -57,15 +57,19 @@ CREATE TABLE Post(
 );
 
 CREATE TABLE Class(
-	CID VARCHAR(255) PRIMARY KEY
+	id INTEGER NOT NULL AUTO_INCREMENT,
+	CID VARCHAR(255) UNIQUE,
+	PRIMARY KEY(id)
 );
 
 -- Not listed in Phase 2 EER model
 CREATE TABLE Teacher(
-	name VARCHAR(255) NOT NULL PRIMARY KEY
+	id INTEGER NOT NULL AUTO_INCREMENT,
+	name VARCHAR(255) NOT NULL UNIQUE,
+	PRIMARY KEY(id)
 );
 
-ALTER TABLE Document ADD FOREIGN KEY(teacher_name) REFERENCES Teacher(name);
+ALTER TABLE Document ADD FOREIGN KEY(TID) REFERENCES Teacher(id);
 -- ALTER TABLE Document ADD FOREIGN KEY(CID) REFERENCES Class(CID); -- Removed CID from document table
 
 -- Called Teachers in Phase 2 EER model
@@ -92,18 +96,28 @@ CREATE TABLE Offered_By(
 	PRIMARY KEY(CID, dept_abbreviation)
 );
 
-INSERT INTO Class VALUES('CS 2300');
+INSERT INTO Class(CID) VALUES('CS 2300');
 INSERT INTO Offered_By VALUES('CS 2300', 'CS');
-INSERT INTO Class VALUES('CS 3800');
+INSERT INTO Class(CID) VALUES('CS 3800');
 INSERT INTO Offered_By VALUES('CS 3800', 'CS');
-INSERT INTO Class VALUES('EE 3410');
+INSERT INTO Class(CID) VALUES('EE 3410');
 INSERT INTO Offered_By VALUES('EE 3410', 'EE');
-INSERT INTO Class VALUES('EE 2100');
+INSERT INTO Class(CID) VALUES('EE 2100');
 INSERT INTO Offered_By VALUES('EE 2100', 'EE');
-INSERT INTO Class VALUES('CpE 5410');
+INSERT INTO Class(CID) VALUES('CpE 5410');
 INSERT INTO Offered_By VALUES('CpE 5410', 'CpE');
+INSERT INTO Class(CID) VALUES('CS 1510');
+INSERT INTO Offered_By VALUES('CS 1510', 'CS');
+INSERT INTO Class(CID) VALUES('CS 3500');
+INSERT INTO Offered_By VALUES('CS 3500', 'CS');
 
-
+INSERT INTO Teacher(name) VALUES('Dan Lin');
+INSERT INTO Teaches VALUES('CS2300', 'Dan Lin');
+INSERT INTO Teacher(name) VALUES('Fikret Ercal');
+INSERT INTO Teaches VALUES('CS3800', 'Fikret Ercal');
+INSERT INTO Teacher(name) VALUES('Angel Morales');
+INSERT INTO Teaches VALUES('CS1510', 'Angel Morales');
+INSERT INTO Teaches VALUES('CS3500', 'Angel Morales');
 
 -- Not sure if this table should exist
 CREATE TABLE Class_Document(
