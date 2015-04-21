@@ -41,7 +41,13 @@ module.exports.addDepartment = function(req, res) {
 
 module.exports.getCourses = function(req, res, abbreviation) {
 	db.getConnection(function(err, connection) {
-		var query = connection.query('SELECT CID FROM Offered_By WHERE dept_abbreviation = ?', abbreviation, function(err, result) {
+
+		var SQL = '\
+				  SELECT C.id, C.CID, O.dept_abbreviation \
+				  FROM Class C, Offered_By O \
+				  WHERE C.CID = O.CID and dept_abbreviation = ?';
+
+		var query = connection.query(SQL, abbreviation, function(err, result) {
 			if(err) {
 				res.send({error : err});
 			}
