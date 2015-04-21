@@ -30,8 +30,6 @@ router.route('/departments')
 router.route('/departments/:abbreviation/courses')
 	.get(function(req, res) { departments.getCourses(req, res, req.params.abbreviation) });
 
-
-
 /* Students Routes */
 router.route('/students')
 	.post(function(req, res) { students.addStudent(req, res) }); // Creates new user

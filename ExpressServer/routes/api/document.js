@@ -3,23 +3,46 @@ var fs = require('fs');
 var async = require('async');
 
 module.exports.queryDocuments = function(req, res) {
-	db.getConnection(function(err, connection) {
-		if(req.query === undefined) {
-			console.log("query is undefined");
-		}
-		else {
-			console.log("query is defined");
-		}
 
-		res.send({result : req.query});
+	// Test if query object is empty
+	var queryParams = Object.getOwnPropertyNames(req.query);
+	if(queryParams.length === 0 ) {
+		res.send({error : 'No query parameters were provided'});
+		return;
+	}
+
+	var clause = '';
+	var values = [];
+	queryParams.forEach(function(param, idx) {
+		clause += param + " = ?";
+		values.push(req.query[param]);
+
+		if(idx < queryParams.length - 1) {
+			clause += ' and ';
+		}
+	});
+
+	db.getConnection(function(err, connection) {
+		var query = connection.query('SELECT * FROM Document WHERE ' + clause, values, function(err, result) {
+			if(err) {
+				res.send({error : err});
+			}
+			else {
+				res.send({result : result});
+			}
+			connection.release();
+		});
+
+		console.log(query.sql);
 	});
 };
+
 
 module.exports.getSingleDocument = function(req, res, DID) {
 	db.getConnection(function(err, connection) {
 		var query = connection.query('SELECT * FROM Document WHERE DID = ?', DID, function(err, result) {
 			if(err) {
-				res.send({err : err});
+				res.send({error : err});
 			}
 			else {
 				res.send({result : result});
@@ -36,7 +59,7 @@ module.exports.updateDocument = function(req, res, DID) {
 		var updates = req.body.updates;
 		var query = connection.query('UPDATE Document SET ? WHERE DID = ?', [updates, DID], function(err, result) {
 			if(err) {
-				res.send({err : err});
+				res.send({error : err});
 			}
 			else {
 				res.send({result : result});

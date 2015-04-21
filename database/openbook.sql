@@ -21,7 +21,7 @@ CREATE TABLE Minors(
 );
 
 CREATE TABLE Document(
-	DID INTEGER PRIMARY KEY,
+	DID INTEGER PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
 	DOU DATE NOT NULL, -- Format is 'YYYY-MM-DD'
 	TID INTEGER(255) NOT NULL, -- Needs to reference teacher_name in Teachers table
@@ -127,10 +127,8 @@ CREATE TABLE Class_Document(
 );
 -- ADD teacher_name to class document table??? Need some link of teacher to class to doc
 
-
-
-
-
+INSERT INTO Document VALUES(33, 'doc33', '2015-06-17', 3, 0, 'Fall', '2009', 'A', 99, NULL);
+INSERT INTO Document VALUES(24, 'another doc', '2015-06-17', 2, 0, 'Spring', '2001', 'A', 78, NULL);
 
 
 
