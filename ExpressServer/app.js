@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var multer = require('multer');
 
 // added code
 //var mongoose = require('mongoose');
@@ -26,6 +27,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(multer({ dest: './uploads/'})) // For handling file uploads
 app.use(express.static(path.join(__dirname, 'public'))); // commented for angular
 
 
