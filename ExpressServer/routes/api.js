@@ -42,7 +42,8 @@ router.route('/students/:username')
 
 /* Documents Routes */
 router.route('/documents')
-	.get(function(req, res) { documents.queryDocuments(req, res) }); // 
+	.get(function(req, res) { documents.queryDocuments(req, res) })
+	.post(function(req, res) { documents.uploadDocument(req, res) });
 
 /* Single Document Routes */
 router.route('/documents/:DID')

@@ -27,8 +27,22 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(multer({ dest: './uploads/'})) // For handling file uploads
 app.use(express.static(path.join(__dirname, 'public'))); // commented for angular
+
+// For handling file uploads
+app.use(multer(
+{
+    dest: './uploads/',
+
+    onFileUploadComplete: function (file, req, res) {
+      console.log(file.fieldname + ' uploaded to  ' + file.path)
+    }
+
+
+}));
+
+
+
 
 
 app.use(function(req, res, next) {

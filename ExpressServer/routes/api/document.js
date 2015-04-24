@@ -88,6 +88,11 @@ module.exports.downloadDocument = function(req, res, DID) {
 	});
 };
 
+module.exports.uploadDocument = function(req, res) {
+	console.log('There was an attempt to upload a file');
+	console.log('req.files = ' + req.files);
+};
+
 module.exports.getDocumentComments = function(req, res, DID) {
 	db.getConnection(function(err, connection) {
 		var SQL =	'\
