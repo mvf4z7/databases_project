@@ -1,6 +1,7 @@
 var db = require('../../databases/mysql');
 var fs = require('fs');
 var async = require('async');
+var dateLib = require('../../utilities/dateLib');
 
 module.exports.queryDocuments = function(req, res) {
 
@@ -103,9 +104,72 @@ module.exports.downloadDocument = function(req, res, DID) {
 
 module.exports.uploadDocument = function(req, res) {
 	console.log('There was an attempt to upload a file');
-	console.log('req.files = ' + req.files.toString());
+	var file = req.files.file;
 
-	res.send('success');
+	// for testing
+	req.body.name = 'this_is_a_name';
+	req.body.teacher_name = 'Dan Lin';
+	req.body.CID = 'CS 3800';
+	req.body.season = 'Spring';
+	req.body.year = '2005';
+	req.body.grade = 35;
+	req.body.username = 'mvf4z7';
+	// end of testing data;
+
+	var values = {
+		name : req.body.name,
+		DOU : dateLib.getDate(),
+		teacher_name : req.body.teacher_name,
+		CID : req.body.CID,
+		season : req.body.season,
+		year : req.body.year,
+		type_flag : 'A',
+		grade : req.body.grade,
+		digitalform : null
+	};
+
+	async.series([
+		function(callback) {
+			db.getConnection(function(err, connection) {
+				var query = connection.query('INSERT INTO Document SET ?', values, function(err, result) {
+					connection.release();
+					if(err) {
+						console.log('Error inserting upload into Document tables!');
+						return callback(err);
+					}
+					else {
+						DID = result.insertId;
+						console.log('Successfully uploaded document with DID = ' + DID);
+						return callback(null, DID);
+					}
+				});
+			});
+		}
+	],
+	function(err, results) {
+		if(err) {
+			res.send({error : err});
+		}
+		else {
+			var DID = results[0];
+			db.getConnection(function(err, connection) {
+				var query = connection.query('INSERT INTO Uploaded VALUES(?, ?)', [req.body.username, DID], function(err, result) {
+					if(err) {
+						console.log('Error inserting into Uploaded table, data will be deleted from Document table');
+						connection.query('DELETE FROM Document WHERE DID = ?', DID);
+						res.send({error : err});
+					}
+					else {
+
+						// Move uploaded file from uploads to course_documents directory
+						fs.rename(file.path, './course_documents/' + DID + '.pdf');
+						res.send('success');
+					}
+					connection.release();
+				});
+			});
+		}
+	});
 };
 
 module.exports.getDocumentComments = function(req, res, DID) {
@@ -154,14 +218,15 @@ module.exports.postDocumentComment = function(req, res, DID) {
 				var query = connection.query('INSERT INTO Post Set ?', post, function(err, result) {
 					if(err) {
 						console.log('Error insterting comment into Post table.');
-						callback(err);
+						return callback(err);
 					}
 					else {
 						return callback(null, 'Post query: ' + query.sql);
 					}
 				});
 			}
-		], function(err, results) {
+		], 
+		function(err, results) {
 			if(err) {
 				var query = connection.query('DELETE FROM Comment WHERE DID = ? and time_stamp = ?', [comment.DID, comment.time_stamp]);
 				var query = connection.query('DELETE FROM Post WHERE DID = ? and time_stamp = ? and username = ?', [comment.DID, comment.time_stamp, username]);
