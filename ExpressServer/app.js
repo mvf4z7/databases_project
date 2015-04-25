@@ -35,7 +35,10 @@ app.use(multer(
     dest: './uploads/',
 
     onFileUploadComplete: function (file, req, res) {
-      console.log(file.fieldname + ' uploaded to  ' + file.path)
+      console.log(file.fieldname + ' uploaded to  ' + file.path);
+      console.log("teacher: " + req.body.teacher);
+      console.log("name: " + req.body.fileName);
+      console.log("dept: " + req.body.dept);
     }
 
 

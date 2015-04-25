@@ -4,10 +4,23 @@ var async = require('async');
 
 module.exports.queryDocuments = function(req, res) {
 
-	// Test if query object is empty
+	// Test if query object is empty send all documents
 	var queryParams = Object.getOwnPropertyNames(req.query);
 	if(queryParams.length === 0 ) {
-		res.send({error : 'No query parameters were provided'});
+		db.getConnection(function(err, connection) {
+			var query = connection.query('SELECT * FROM Document', function(err, result) {
+				if(err) {
+					res.send({error : err});
+				}
+				else {
+					res.send({result : result});
+				}
+				connection.release();
+			});
+
+			console.log(query.sql);
+		});
+
 		return;
 	}
 
@@ -90,7 +103,9 @@ module.exports.downloadDocument = function(req, res, DID) {
 
 module.exports.uploadDocument = function(req, res) {
 	console.log('There was an attempt to upload a file');
-	console.log('req.files = ' + req.files);
+	console.log('req.files = ' + req.files.toString());
+
+	res.send('success');
 };
 
 module.exports.getDocumentComments = function(req, res, DID) {
