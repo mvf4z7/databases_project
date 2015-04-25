@@ -9,23 +9,25 @@ CREATE TABLE Student(
 );
 
 CREATE TABLE Majors(
-	username VARCHAR(255) NOT NULL REFERENCES Student(username),
+	username VARCHAR(255) NOT NULL,
 	major VARCHAR(255) NOT NULL,
+	FOREIGN KEY (username) REFERENCES Student(username) ON DELETE CASCADE,
 	PRIMARY KEY(username, major)
 );
 
 CREATE TABLE Minors(
-	username VARCHAR(255) NOT NULL REFERENCES Student(username),
+	username VARCHAR(255) NOT NULL,
 	minor VARCHAR(255) NOT NULL,
-	PRIMARY KEY(username, minor)
+	FOREIGN KEY (username) REFERENCES Student(username) ON DELETE CASCADE,
+	PRIMARY KEY (username, minor)
 );
 
 CREATE TABLE Document(
 	DID INTEGER PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
 	DOU DATE NOT NULL, -- Format is 'YYYY-MM-DD'
-	TID INTEGER(255) NOT NULL, -- Needs to reference teacher_name in Teachers table
-	-- CID VARCHAR(255) NOT NULL, -- Needs to reference CID in Class table, NOT IN PHASE 2 EER diagram
+	teacher_name VARCHAR(255) NOT NULL, -- Needs to reference teacher_name in Teachers table
+	CID VARCHAR(255) NOT NULL, -- Needs to reference CID in Class table, NOT IN PHASE 2 EER diagram
 	votes INTEGER NOT NULL DEFAULT 0,
 	season VARCHAR(6) NOT NULL check(season = 'Fall' or season = 'Spring' or season = 'Summer'),
 	year CHAR(4) NOT NULL,
@@ -35,30 +37,35 @@ CREATE TABLE Document(
 );
 
 CREATE TABLE Uploaded(
-	username VARCHAR(255) NOT NULL REFERENCES Student(username),
-	DID INTEGER NOT NULL REFERENCES Document(DID),
+	username VARCHAR(255) NOT NULL,
+	DID INTEGER NOT NULL,
+	FOREIGN KEY (username) REFERENCES Student(username) ON DELETE CASCADE,
+	FOREIGN KEY (DID) REFERENCES Document(DID) ON DELETE CASCADE,
 	PRIMARY KEY(username, DID)
 );
 
 CREATE TABLE Comment(
-	DID INTEGER NOT NULL REFERENCES Document(DID),
+	DID INTEGER NOT NULL,
 	time_stamp DATETIME NOT NULL,  -- Format is 'YYYY-MM-DD HH:MM:SS'
 	content VARCHAR(500) NOT NULL,
 	anonymous BOOL NOT NULL,
+	FOREIGN KEY (DID) REFERENCES Document(DID) ON DELETE CASCADE,
 	PRIMARY KEY(DID, time_stamp)
 );
 
 -- Students Post Comments
 CREATE TABLE Post(
-	DID INTEGER NOT NULL REFERENCES Document(DID),
-	time_stamp DATETIME NOT NULL REFERENCES Comment(time_stamp),
-	username VARCHAR(255) NOT NULL REFERENCES Student(username),
+	DID INTEGER NOT NULL,
+	time_stamp DATETIME NOT NULL,
+	username VARCHAR(255) NOT NULL,
+	FOREIGN KEY (DID, time_stamp) REFERENCES Comment(DID, time_stamp) ON DELETE CASCADE,
+	FOREIGN KEY (username) REFERENCES Student(username) ON DELETE CASCADE,
 	PRIMARY KEY(DID, time_stamp, username)
 );
 
 CREATE TABLE Class(
 	id INTEGER NOT NULL AUTO_INCREMENT,
-	CID VARCHAR(255) UNIQUE,
+	CID VARCHAR(255) NOT NULL UNIQUE,
 	PRIMARY KEY(id)
 );
 
@@ -69,13 +76,15 @@ CREATE TABLE Teacher(
 	PRIMARY KEY(id)
 );
 
-ALTER TABLE Document ADD FOREIGN KEY(TID) REFERENCES Teacher(id);
--- ALTER TABLE Document ADD FOREIGN KEY(CID) REFERENCES Class(CID); -- Removed CID from document table
+ALTER TABLE Document ADD FOREIGN KEY (teacher_name) REFERENCES Teacher(name) ON DELETE CASCADE;
+ALTER TABLE Document ADD FOREIGN KEY (CID) REFERENCES Class(CID) ON DELETE CASCADE;
 
 -- Called Teachers in Phase 2 EER model
 CREATE TABLE Teaches(
-	CID VARCHAR(255) NOT NULL REFERENCES Class(CID),
-	teacher_name VARCHAR(255) NOT NULL REFERENCES Teacher(name),
+	CID VARCHAR(255) NOT NULL,
+	teacher_name VARCHAR(255) NOT NULL,
+	FOREIGN KEY (CID) REFERENCES Class(CID) ON DELETE CASCADE,
+	FOREIGN KEY (teacher_name) REFERENCES Teacher(name) ON DELETE CASCADE,
 	PRIMARY KEY(CID, teacher_name)
 );
 
@@ -91,8 +100,10 @@ INSERT INTO Department VALUES('EE', 'Electrical Engineering', '141 Emerson Elect
 INSERT INTO Department VALUES('ME', 'Mechanical Engineering', '194 Toomey Hall');
 
 CREATE TABLE Offered_By(
-	CID VARCHAR(255) NOT NULL REFERENCES Class(CID),
-	dept_abbreviation VARCHAR(255) NOT NULL REFERENCES Department(abbreviation),
+	CID VARCHAR(255) NOT NULL,
+	dept_abbreviation VARCHAR(255) NOT NULL,
+	FOREIGN KEY (CID) REFERENCES Class(CID),
+	FOREIGN KEY (dept_abbreviation) REFERENCES Department(abbreviation) ON DELETE CASCADE,
 	PRIMARY KEY(CID, dept_abbreviation)
 );
 
@@ -112,23 +123,24 @@ INSERT INTO Class(CID) VALUES('CS 3500');
 INSERT INTO Offered_By VALUES('CS 3500', 'CS');
 
 INSERT INTO Teacher(name) VALUES('Dan Lin');
-INSERT INTO Teaches VALUES('CS2300', 'Dan Lin');
+INSERT INTO Teaches VALUES('CS 2300', 'Dan Lin');
 INSERT INTO Teacher(name) VALUES('Fikret Ercal');
-INSERT INTO Teaches VALUES('CS3800', 'Fikret Ercal');
+INSERT INTO Teaches VALUES('CS 3800', 'Fikret Ercal');
 INSERT INTO Teacher(name) VALUES('Angel Morales');
-INSERT INTO Teaches VALUES('CS1510', 'Angel Morales');
-INSERT INTO Teaches VALUES('CS3500', 'Angel Morales');
+INSERT INTO Teaches VALUES('CS 1510', 'Angel Morales');
+INSERT INTO Teaches VALUES('CS 3500', 'Angel Morales');
 
 -- Not sure if this table should exist
 CREATE TABLE Class_Document(
-	DID INTEGER NOT NULL REFERENCES Document(DID),
-	CID VARCHAR(255) NOT NULL REFERENCES Class(CID),
+	DID INTEGER NOT NULL,
+	CID VARCHAR(255) NOT NULL,
+	FOREIGN KEY (DID) REFERENCES Document(DID) ON DELETE CASCADE,
+	FOREIGN KEY (CID) REFERENCES Class(CID) ON DELETE CASCADE,
 	PRIMARY KEY(DID, CID)
 );
--- ADD teacher_name to class document table??? Need some link of teacher to class to doc
 
-INSERT INTO Document VALUES(33, 'doc33', '2015-06-17', 3, 0, 'Fall', '2009', 'A', 99, NULL);
-INSERT INTO Document VALUES(24, 'another doc', '2015-06-17', 2, 0, 'Spring', '2001', 'A', 78, NULL);
+INSERT INTO Document VALUES(33, 'doc33', '2015-06-17', 'Angel Morales', 'CS 1510', 0, 'Fall', '2009', 'A', 99, NULL);
+INSERT INTO Document VALUES(24, 'another doc', '2015-06-17', 'Fikret Ercal', 'CS 3800', 0, 'Spring', '2001', 'A', 78, NULL);
 
 
 
