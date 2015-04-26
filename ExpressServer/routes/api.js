@@ -50,6 +50,9 @@ router.route('/students/:username')
 	.put(function(req,res) { students.updateStudent(req, res, req.params.username) }) // Update a user's info
 	.delete(function(req, res) { students.deleteStudent(req, res, req.params.username) }); // Delete a user from the system
 
+router.route('/students/:username/documents')
+	.get(function(req, res) { students.getAllDocuments(req, res, req.params.username) });
+
 /* Documents Routes */
 router.route('/documents')
 	.get(function(req, res) { documents.queryDocuments(req, res) })

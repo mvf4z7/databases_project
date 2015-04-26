@@ -5,7 +5,7 @@ var dateLib = require('../../utilities/dateLib');
 
 module.exports.queryDocuments = function(req, res) {
 
-	// Test if query object is empty send all documents
+	// Test if query object is empty, if it is send all documents
 	var queryParams = Object.getOwnPropertyNames(req.query);
 	if(queryParams.length === 0 ) {
 		db.getConnection(function(err, connection) {
@@ -113,7 +113,7 @@ module.exports.uploadDocument = function(req, res) {
 	req.body.season = 'Spring';
 	req.body.year = '2005';
 	req.body.grade = 35;
-	req.body.username = 'mvf4z7';
+	req.body.username = 'abc123';
 	// end of testing data;
 
 	var values = {

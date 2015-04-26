@@ -216,4 +216,25 @@ module.exports.deleteStudent = function(req, res, username) {
 	});
 };
 
+module.exports.getAllDocuments = function(req, res, username) {
+	db.getConnection(function(err, connection) {
+		var SQL = '\
+				  SELECT * \
+				  FROM Document \
+				  NATURAL JOIN Uploaded \
+				  WHERE Uploaded.username = ?';
+
+		var query = connection.query(SQL, username, function(err, result) {
+			connection.release();
+			if(err) {
+				res.send({error : err});
+			}
+			else {
+				res.send({result : result});
+			}
+		});
+		console.log(query.sql);
+	});
+};
+
 
