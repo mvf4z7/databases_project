@@ -105,6 +105,88 @@ module.exports.addStudent = function(req, res) {
 };
 
 module.exports.getSingleStudent = function(req, res, username) {
+	function getStudentInfo(callback) {
+		db.getConnection(function(err, connection) {
+			var query = connection.query('SELECT * FROM Student WHERE username = ?' , username, function(err, result) {
+				connection.release();
+				if(err) {
+					return callback(err);
+				}
+				else {
+					return callback(null, result);
+				}
+			});
+		});
+	}
+
+	function getMajors(callback) {
+		db.getConnection(function(err, connection) {
+			var query = connection.query('SELECT DISTINCT major FROM Majors WHERE username = ?', username, function(err, result) {
+				connection.release();
+				if(err) {
+					return callback(err);
+				}
+				else {
+					return callback(null, result);
+				}
+			});
+		});
+	}
+
+	function getMinors(callback) {
+		db.getConnection(function(err, connection) {
+			var query = connection.query('SELECT DISTINCT minor FROM Minors WHERE username = ?', username, function(err, result) {
+				connection.release();
+				if(err) {
+					return callback(err);
+				}
+				else {
+					return callback(null, result);
+				}
+			});
+		});
+	}
+
+	async.series([
+		getStudentInfo,
+		getMajors,
+		getMinors
+	],
+	function(err, results) {
+		if(err) {
+			res.send({error : err});
+		}
+		else {
+			var studentInfo = results[0];
+			var majorsQuery = results[1];
+			var minorsQuery = results[2];
+
+			var majors = [];
+			majorsQuery.forEach(function(result) {
+				majors.push(result.major);
+			});
+
+			var minors = [];
+			minorsQuery.forEach(function(result) {
+				minors.push(result.minor);
+			});
+
+			studentInfo[0].majors = majors;
+			studentInfo[0].minors = minors;
+
+			console.log(majors);
+			console.log(minors);
+
+			res.send({result : studentInfo});
+		}
+	});
+
+
+
+
+
+
+/*
 	db.getConnection(function(err, connection) {
 		var query = connection.query('SELECT * FROM Student WHERE username = ?' , username, function(err, result) {
 			if(err) {
@@ -118,6 +200,7 @@ module.exports.getSingleStudent = function(req, res, username) {
 
 		console.log(query.sql)
 	})
+*/
 };
 
 module.exports.updateStudent = function(req, res, username) {

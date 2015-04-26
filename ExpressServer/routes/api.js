@@ -60,12 +60,6 @@ router.route('/documents/:DID/comments')
 	.get(function(req, res) { documents.getDocumentComments(req, res, req.params.DID) })
 	.post(function(req, res) { documents.postDocumentComment(req, res, req.params.DID) });
 
-// Need routes for
-// /documents?teacher=lin
-// semester, teacher, year, class, department
-
-// get all departments. classes, teachers, years, semester
-
 module.exports = router;  
 
 

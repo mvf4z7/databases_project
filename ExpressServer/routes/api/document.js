@@ -160,7 +160,6 @@ module.exports.uploadDocument = function(req, res) {
 						res.send({error : err});
 					}
 					else {
-
 						// Move uploaded file from uploads to course_documents directory
 						fs.rename(file.path, './course_documents/' + DID + '.pdf');
 						res.send('success');
@@ -195,10 +194,18 @@ module.exports.postDocumentComment = function(req, res, DID) {
 	db.getConnection(function(err, connection) {
 		var comment = req.body.comment;
 		var username = req.body.username;
+		var timeStamp = dateLib.getDateTime();
+
+		comment = {
+			DID : DID,
+			time_stamp : timeStamp,
+			content : comment.content,
+			anonymous : comment.anonymous
+		};
 
 		var post = {
-			DID : comment.DID,
-			time_stamp : comment.time_stamp,
+			DID : DID,
+			time_stamp : timeStamp,
 			username : username
 		};
 
