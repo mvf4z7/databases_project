@@ -6,6 +6,7 @@ var multer = require('multer');
 var departments = require('./api/department');
 var students = require('./api/student');
 var documents = require('./api/document');
+var classes = require('./api/class');
 
 
 /* Posts routes */
@@ -30,6 +31,10 @@ router.route('/departments')
 
 router.route('/departments/:abbreviation/courses')
 	.get(function(req, res) { departments.getCourses(req, res, req.params.abbreviation) });
+
+/* Classes Routes */
+router.route('/classes')
+	.get(function(req, res) { classes.getAllClasses(req, res) });
 
 /* Students Routes */
 router.route('/students')
