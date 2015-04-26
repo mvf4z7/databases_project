@@ -180,34 +180,13 @@ module.exports.getSingleStudent = function(req, res, username) {
 			res.send({result : studentInfo});
 		}
 	});
-
-
-
-
-
-
-/*
-	db.getConnection(function(err, connection) {
-		var query = connection.query('SELECT * FROM Student WHERE username = ?' , username, function(err, result) {
-			if(err) {
-				res.send({error : err});
-			}
-			else {
-				res.send({result : result});
-			}
-			connection.release();
-		});
-
-		console.log(query.sql)
-	})
-*/
 };
 
 module.exports.updateStudent = function(req, res, username) {
 	db.getConnection(function(err, connection) {
 		updates = req.body.updates;
 
-		var query = connection.query('UPDATE Student SET ? WHERE username = ?', [updates, username], function(err, reuslt) {
+		var query = connection.query('UPDATE Student SET ? WHERE username = ?', [updates, username], function(err, result) {
 			if(err) {
 				res.send({error : err});
 			}

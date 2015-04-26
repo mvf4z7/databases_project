@@ -129,6 +129,7 @@ INSERT INTO Teaches VALUES('CS 3800', 'Fikret Ercal');
 INSERT INTO Teacher(name) VALUES('Angel Morales');
 INSERT INTO Teaches VALUES('CS 1510', 'Angel Morales');
 INSERT INTO Teaches VALUES('CS 3500', 'Angel Morales');
+INSERT INTO Teaches VALUES('CS 1510', 'Dan Lin');
 
 -- Not sure if this table should exist
 CREATE TABLE Class_Document(

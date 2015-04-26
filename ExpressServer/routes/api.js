@@ -32,9 +32,13 @@ router.route('/departments')
 router.route('/departments/:abbreviation/courses')
 	.get(function(req, res) { departments.getCourses(req, res, req.params.abbreviation) });
 
-/* Classes Routes */
+/* Classes Route */
 router.route('/classes')
 	.get(function(req, res) { classes.getAllClasses(req, res) });
+
+/* Class Teachers Route */
+router.route('/classes/:id/teachers')
+	.get(function(req, res) { classes.getClassTeachers(req, res, req.params.id) });
 
 /* Students Routes */
 router.route('/students')
