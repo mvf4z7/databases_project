@@ -36,7 +36,7 @@ router.route('/departments/:abbreviation/courses')
 router.route('/classes')
 	.get(function(req, res) { classes.getAllClasses(req, res) });
 
-/* Class Teachers Route */
+/* Single Class Routes */
 router.route('/classes/:id/teachers')
 	.get(function(req, res) { classes.getClassTeachers(req, res, req.params.id) });
 
@@ -53,6 +53,9 @@ router.route('/students/:username')
 router.route('/students/:username/documents')
 	.get(function(req, res) { students.getAllDocuments(req, res, req.params.username) });
 
+router.route('/students/:username/comments')
+	.get(function(req, res) { students.getAllComments(req, res, req.params.username) });
+
 /* Documents Routes */
 router.route('/documents')
 	.get(function(req, res) { documents.queryDocuments(req, res) })
@@ -63,11 +66,9 @@ router.route('/documents/:DID')
 	.get(function(req, res) { documents.getSingleDocument(req, res, req.params.DID) })
 	.put(function(req, res) { documents.updateDocument(req, res, req.params.DID) });
 
-/* Document Download Routes */
 router.route('/documents/:DID/download')
 	.get(function(req, res) { documents.downloadDocument(req, res, req.params.DID) });
 
-/* Document Comments Route*/
 router.route('/documents/:DID/comments')
 	.get(function(req, res) { documents.getDocumentComments(req, res, req.params.DID) })
 	.post(function(req, res) { documents.postDocumentComment(req, res, req.params.DID) });

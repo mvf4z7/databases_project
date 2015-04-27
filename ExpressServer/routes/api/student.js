@@ -237,4 +237,25 @@ module.exports.getAllDocuments = function(req, res, username) {
 	});
 };
 
+module.exports.getAllComments = function(req, res, username) {
+	db.getConnection(function(err, connection) {
+		var SQL = '\
+				   SELECT * \
+				   FROM Post \
+				   NATURAL JOIN	Comment \
+				   WHERE Post.username = ?';
+
+		var query = connection.query(SQL, username, function(err, result) {
+			connection.release();
+			if(err) {
+				res.send({error : err});
+			}
+			else {
+				res.send({result : result});
+			}
+		});
+		console.log(query.sql);
+	});
+};
+
 
