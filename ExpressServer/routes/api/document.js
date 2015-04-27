@@ -7,9 +7,15 @@ module.exports.queryDocuments = function(req, res) {
 
 	// Test if query object is empty, if it is send all documents
 	var queryParams = Object.getOwnPropertyNames(req.query);
+
+	var SQL = '\
+			   SELECT * \
+			   FROM Document \
+			   NATURAL JOIN Uploaded';
+
 	if(queryParams.length === 0 ) {
 		db.getConnection(function(err, connection) {
-			var query = connection.query('SELECT * FROM Document', function(err, result) {
+			var query = connection.query(SQL, function(err, result) { // SELECT * FROM Document
 				if(err) {
 					res.send({error : err});
 				}
@@ -37,7 +43,7 @@ module.exports.queryDocuments = function(req, res) {
 	});
 
 	db.getConnection(function(err, connection) {
-		var query = connection.query('SELECT * FROM Document WHERE ' + clause, values, function(err, result) {
+		var query = connection.query(SQL + ' WHERE ' + clause, values, function(err, result) { // SELECT * FROM Document WHERE
 			if(err) {
 				res.send({error : err});
 			}
