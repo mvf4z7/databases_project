@@ -131,15 +131,6 @@ INSERT INTO Teaches VALUES('CS 1510', 'Angel Morales');
 INSERT INTO Teaches VALUES('CS 3500', 'Angel Morales');
 INSERT INTO Teaches VALUES('CS 1510', 'Dan Lin');
 
--- Not sure if this table should exist
-CREATE TABLE Class_Document(
-	DID INTEGER NOT NULL,
-	CID VARCHAR(255) NOT NULL,
-	FOREIGN KEY (DID) REFERENCES Document(DID) ON DELETE CASCADE,
-	FOREIGN KEY (CID) REFERENCES Class(CID) ON DELETE CASCADE,
-	PRIMARY KEY(DID, CID)
-);
-
 INSERT INTO Document VALUES(33, 'doc33', '2015-06-17', 'Angel Morales', 'CS 1510', 0, 'Fall', '2009', 'A', 99, NULL);
 INSERT INTO Document VALUES(24, 'another doc', '2015-06-17', 'Fikret Ercal', 'CS 3800', 0, 'Spring', '2001', 'A', 78, NULL);
 
