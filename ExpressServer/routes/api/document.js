@@ -177,6 +177,76 @@ module.exports.uploadDocument = function(req, res) {
 	});
 };
 
+module.exports.deleteDocument = function(req, res, DID) {
+	async.series([
+		function(callback) {
+			db.getConnection(function(err, connection) {
+				var query = connection.query('DELETE FROM Post WHERE DID = ?', DID, function(err, result) {
+					connection.release();
+					if(err) {
+						return callback(err);
+					}
+					else {
+						return callback(null, result);
+					}
+				});
+			});
+		},
+		function(callback) {
+			db.getConnection(function(err, connection) {
+				var query = connection.query('DELETE FROM Comment WHERE DID = ?', DID, function(err, result) {
+					connection.release();
+					if(err) {
+						return callback(err);
+					}
+					else {
+						return callback(null, result);
+					}
+				});
+			});
+		},
+		function(callback) {
+			db.getConnection(function(err, connection) {
+				var query = connection.query('DELETE FROM Uploaded WHERE DID = ?', DID, function(err, result) {
+					connection.release();
+					if(err) {
+						return callback(err);
+					}
+					else {
+						return callback(null, result);
+					}
+				});
+			});
+		},
+		function(callback) {
+			db.getConnection(function(err, connection) {
+				var query = connection.query('DELETE FROM Document WHERE DID = ?', DID, function(err, result) {
+					connection.release();
+					if(err) {
+						return callback(err);
+					}
+					else {
+						return callback(null, result);
+					}
+				});
+			});
+		},
+	],
+	function(err, results) {
+		if(err) {
+			res.send({error : err});
+		}
+		else {
+			fs.unlink('./course_documents/' + DID + '.pdf', function(err) {
+				if(!err) {
+					console.log('Document deleted: DID = ' + DID);
+				}
+				res.send('success');
+			});
+		}
+	});
+};
+
 module.exports.getDocumentComments = function(req, res, DID) {
 	db.getConnection(function(err, connection) {
 		var SQL =	'\

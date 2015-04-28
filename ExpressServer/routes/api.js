@@ -64,7 +64,8 @@ router.route('/documents')
 /* Single Document Routes */
 router.route('/documents/:DID')
 	.get(function(req, res) { documents.getSingleDocument(req, res, req.params.DID) })
-	.put(function(req, res) { documents.updateDocument(req, res, req.params.DID) });
+	.put(function(req, res) { documents.updateDocument(req, res, req.params.DID) })
+	.delete(function(req, res) { documents.deleteDocument(req, res, req.params.DID) });
 
 router.route('/documents/:DID/download')
 	.get(function(req, res) { documents.downloadDocument(req, res, req.params.DID) });
