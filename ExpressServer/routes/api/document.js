@@ -113,6 +113,7 @@ module.exports.uploadDocument = function(req, res) {
 	var file = req.files.file;
 
 	// for testing
+	/*
 	req.body.name = 'this_is_a_name';
 	req.body.teacher_name = 'Dan Lin';
 	req.body.CID = 'CS 3800';
@@ -120,6 +121,7 @@ module.exports.uploadDocument = function(req, res) {
 	req.body.year = '2005';
 	req.body.grade = 35;
 	req.body.username = 'abc123';
+	*/
 	// end of testing data;
 
 	var values = {
