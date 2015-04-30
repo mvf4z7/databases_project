@@ -1,4 +1,5 @@
 var db = require('../../databases/mysql');
+var fs = require('fs');
 var async = require('async');
 
 module.exports.addStudent = function(req, res) {
@@ -109,6 +110,8 @@ module.exports.getSingleStudent = function(req, res, username) {
 		db.getConnection(function(err, connection) {
 			var query = connection.query('SELECT * FROM Student WHERE username = ?' , username, function(err, result) {
 				connection.release();
+				console.log("student info:");
+				console.log(result);
 				if(err) {
 					return callback(err);
 				}
@@ -123,6 +126,8 @@ module.exports.getSingleStudent = function(req, res, username) {
 		db.getConnection(function(err, connection) {
 			var query = connection.query('SELECT DISTINCT major FROM Majors WHERE username = ?', username, function(err, result) {
 				connection.release();
+				console.log('getMajors result');
+				console.log(result);
 				if(err) {
 					return callback(err);
 				}
@@ -137,6 +142,8 @@ module.exports.getSingleStudent = function(req, res, username) {
 		db.getConnection(function(err, connection) {
 			var query = connection.query('SELECT DISTINCT minor FROM Minors WHERE username = ?', username, function(err, result) {
 				connection.release();
+				console.log('getMinors result:');
+				console.log(result);
 				if(err) {
 					return callback(err);
 				}
@@ -176,7 +183,8 @@ module.exports.getSingleStudent = function(req, res, username) {
 
 			console.log(majors);
 			console.log(minors);
-
+			console.log('studentinfo');
+			console.log(studentInfo);
 			res.send({result : studentInfo});
 		}
 	});
@@ -201,18 +209,101 @@ module.exports.updateStudent = function(req, res, username) {
 };
 
 module.exports.deleteStudent = function(req, res, username) {
-	db.getConnection(function(err, connection) {
-		var query = connection.query('DELETE FROM Student WHERE username = ?', username, function(err, result) {
-			if(err) {
-				res.send({error : err});
-			}
-			else {
-				res.send('success');
-			}
-			connection.release();
-		});
+	DIDs = []; commentPairs = [];
+	async.series([
+		function(callback) {
+			db.getConnection(function(err, connection) {
+				var SQL = '\
+						  SELECT DID \
+						  FROM Document \
+						  NATURAL JOIN Uploaded \
+						  WHERE Uploaded.username = ?';
 
-		console.log(query.sql);
+				var query = connection.query(SQL, username, function(err, result) {
+					connection.release();
+					if(err) {
+						return callback(err);
+					}
+					else {
+						result.forEach(function(row) {
+							DIDs.push(row.DID);
+						});
+						console.log(DIDs);
+						return callback();
+					}
+				});
+				console.log(query);
+			});
+		},
+		function(callback) {
+			db.getConnection(function(err, connection) {
+				var query = '';
+				query = connection.query('DELETE FROM Post WHERE username = ? or DID in (?)', [username, DIDs]); console.log(query.sql);
+				query = connection.query('DELETE FROM Comment WHERE DID in (?)', [DIDs]); console.log(query.sql);
+				query = connection.query('DELETE FROM Uploaded WHERE username = ?', username); console.log(query.sql);
+				query = connection.query('DELETE FROM Document WHERE DID in (?)', [DIDs]); console.log(query.sql);
+				query = connection.query('DELETE FROM Minors WHERE username = ?', username); console.log(query.sql);
+				query = connection.query('DELETE FROM Majors WHERE username = ?', username); console.log(query.sql);
+				query = connection.query('DELETE FROM Student WHERE username = ?', username); console.log(query.sql);
+				connection.release();
+				callback(null, 'DELETE success');
+			});
+		},
+		function(callback) {
+			db.getConnection(function(err, connection) {
+				var query = connection.query('SELECT DID, time_stamp FROM Post NATURAL RIGHT JOIN Comment WHERE username IS NULL', function(err, result) {
+					connection.release();
+					if(err) {
+						return callback(err);
+					}
+					else {
+						commentPairs = result;
+						return callback();
+					}
+				});
+				console.log(query.sql);
+			});
+		},
+		function(callback) {
+			db.getConnection(function(err, connection) {
+
+				function deleteCommentPair(pair, cb) {
+					var query = connection.query('DELETE FROM Comment WHERE DID = ? and time_stamp = ?', [pair.DID, pair.time_stamp], function(err, result) {
+						if(err) {
+							return cb(err);
+						}
+						else {
+							return cb();
+						}
+					});
+				}
+
+				async.eachSeries(commentPairs, deleteCommentPair, function(err) {
+					connection.release();
+					if(err) {
+						return callback(err);
+					}
+					else {
+						return callback();
+					}
+				});
+			});
+		}
+	],
+	function(err, results) {
+		if(err) {
+			res.send({error : err});
+		}
+		else {
+			DIDs.forEach(function(DID) {
+				fs.unlink('./course_documents/' + DID + '.pdf', function(err) {
+					if(!err) {
+						console.log('Document deleted: DID = ' + DID);
+					}
+				});
+			});
+			res.send('success');
+		}
 	});
 };
 
