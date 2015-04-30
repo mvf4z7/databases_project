@@ -7,6 +7,8 @@ module.exports.addStudent = function(req, res) {
 	var majors = req.body.majors;
 	var minors = req.body.minors;
 
+	console.log(req.body);
+
 	function insertStudent(callback) {
 		db.getConnection(function(err, connection) {
 			var query = connection.query('INSERT INTO Student SET ?', student, function(err, result) {
