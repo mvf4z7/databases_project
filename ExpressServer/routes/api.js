@@ -2,27 +2,11 @@ var express = require('express');
 var router = express.Router();
 var multer = require('multer');
 
-//var posts = require('./api/post');
 var departments = require('./api/department');
 var students = require('./api/student');
 var documents = require('./api/document');
 var classes = require('./api/class');
-
-
-/* Posts routes */
-/* Code included by default
-router.route('/posts')  
-    .post(function(req,res) { posts.addPost(req,res) })
-    .get(function(req,res) { posts.getAllPosts(req,res) });
-*/
-
-/* Single post routes */
-/* Code included by default
-router.route('/posts/:post_id')  
-    .get(function(req, res) { posts.getSinglePost(req, res, req.params.post_id) })
-    .put(function(req, res) { posts.updatePost(req, res, req.params.post_id) })
-    .delete(function(req, res) { posts.deletePost(req, res, req.params.post_id) });
-*/
+var stats = require('./api/stats');
 
 /* Departments Routes */
 router.route('/departments')
@@ -73,6 +57,9 @@ router.route('/documents/:DID/download')
 router.route('/documents/:DID/comments')
 	.get(function(req, res) { documents.getDocumentComments(req, res, req.params.DID) })
 	.post(function(req, res) { documents.postDocumentComment(req, res, req.params.DID) });
+
+router.route('/stats/votes')
+	.get(function(req, res) { stats.getVotesSum(req, res) });
 
 module.exports = router;  
 
