@@ -13,6 +13,7 @@ router.route('/departments')
 	.get(function(req, res) { departments.getAllDepartments(req, res) })
 	.post(function(req,res) { departments.addDepartment(req,res) });
 
+/* Single Department Routes */
 router.route('/departments/:abbreviation/courses')
 	.get(function(req, res) { departments.getCourses(req, res, req.params.abbreviation) });
 
@@ -58,8 +59,10 @@ router.route('/documents/:DID/comments')
 	.get(function(req, res) { documents.getDocumentComments(req, res, req.params.DID) })
 	.post(function(req, res) { documents.postDocumentComment(req, res, req.params.DID) });
 
+/* Routes for User Statistics */
 router.route('/stats/votes')
 	.get(function(req, res) { stats.getVotesSum(req, res) });
+
 
 module.exports = router;  
 
