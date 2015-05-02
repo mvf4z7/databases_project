@@ -270,6 +270,7 @@ module.exports.deleteStudent = function(req, res, username) {
 			db.getConnection(function(err, connection) {
 
 				function deleteCommentPair(pair, cb) {
+					console.log(pair);
 					var query = connection.query('DELETE FROM Comment WHERE DID = ? and time_stamp = ?', [pair.DID, pair.time_stamp], function(err, result) {
 						if(err) {
 							return cb(err);
@@ -278,6 +279,7 @@ module.exports.deleteStudent = function(req, res, username) {
 							return cb();
 						}
 					});
+					console.log(query.sql);
 				}
 
 				async.eachSeries(commentPairs, deleteCommentPair, function(err) {
